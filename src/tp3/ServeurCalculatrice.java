@@ -7,14 +7,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ServeurCalculatrice {
     private static final int PORT = 1234;
     private static final AtomicInteger compteurClients = new AtomicInteger(0);
-
-    // Ressource partagée : compteur global d'opérations traitées.
     private static int compteurOperations = 0;
-
     private static synchronized int incrementerCompteurOperations() {
         return ++compteurOperations;
     }
-
     public static void main(String[] args) {
         try (ServerSocket serveur = new ServerSocket(PORT)) {
             System.out.println("Serveur calculatrice multi-thread démarré sur le port " + PORT);
@@ -51,8 +47,6 @@ class ClientProcessCalculatrice implements Runnable {
 
     @Override
     public void run() {
-        // Créer et flusher ObjectOutputStream avant ObjectInputStream des deux côtés
-        // évite le blocage pendant l'échange des en-têtes de sérialisation.
         try (Socket client = socket;
              ObjectOutputStream sortie = new ObjectOutputStream(client.getOutputStream())) {
             sortie.flush();
